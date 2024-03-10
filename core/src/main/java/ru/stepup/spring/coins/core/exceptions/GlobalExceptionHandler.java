@@ -17,4 +17,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDto> handleBadRequestException(BadRequestException e) {
         return new ResponseEntity<>(new ErrorDto(e.getCode(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IntegrationException.class)
+    public ResponseEntity<ErrorDto> handleBadRequestException(IntegrationException e) {
+        return new ResponseEntity<>(new ErrorDto(
+                e.getIntegrationErrorDto().code(),
+                e.getIntegrationErrorDto().message()
+        ), HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }
