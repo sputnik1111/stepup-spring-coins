@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -54,10 +55,9 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{userId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId) {
-        return userService.delete(userId)
-                ? ResponseEntity.status(HttpStatus.OK).build()
-                : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long userId) {
+        userService.delete(userId);
     }
 
     @DeleteMapping(value = "/all")
@@ -78,9 +78,8 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/products/{productId}")
-    public ResponseEntity<ProductView> create(@PathVariable Long productId) {
-        return userService.deleteProduct(productId)
-                ? ResponseEntity.status(HttpStatus.OK).build()
-                : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable Long productId) {
+        userService.deleteProduct(productId);
     }
 }
