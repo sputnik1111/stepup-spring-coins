@@ -1,7 +1,6 @@
 package com.github.sputnik1111.service.product.domain.user.rest;
 
-import com.github.sputnik1111.service.product.domain.product.CreateProductDto;
-import com.github.sputnik1111.service.product.domain.product.ProductView;
+import com.github.sputnik1111.common.domain.page.Page;
 import com.github.sputnik1111.service.product.domain.user.CreateUserDto;
 import com.github.sputnik1111.service.product.domain.user.UserService;
 import com.github.sputnik1111.service.product.domain.user.UserView;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,8 +35,8 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserView> findAll() {
-        return userService.findAll();
+    public Page<UserView> findAll() {
+        return new Page<>(userService.findAll());
     }
 
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,21 +64,5 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping(value = "/{userId}/products", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProductView> create(@PathVariable Long userId, @RequestBody CreateProductDto request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.addProduct(userId, request));
-    }
 
-    @GetMapping(value = "/{userId}/products", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ProductView> findAllProductByUserId(@PathVariable Long userId) {
-        return userService.findByProductByUserId(userId);
-    }
-
-    @DeleteMapping(value = "/products/{productId}")
-    public ResponseEntity<ProductView> create(@PathVariable Long productId) {
-        return userService.deleteProduct(productId)
-                ? ResponseEntity.status(HttpStatus.OK).build()
-                : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
 }

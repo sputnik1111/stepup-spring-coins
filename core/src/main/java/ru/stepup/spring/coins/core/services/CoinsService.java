@@ -7,7 +7,6 @@ import ru.stepup.spring.coins.core.api.ExecuteCoinsResponse;
 import ru.stepup.spring.coins.core.exceptions.BadRequestException;
 import ru.stepup.spring.coins.core.configurations.properties.CoreProperties;
 
-import java.util.List;
 
 @Service
 public class CoinsService {
@@ -27,16 +26,12 @@ public class CoinsService {
                 throw new BadRequestException("Указан заблокированный номер кошелька", "BLOCKED_ACCOUNT_NUMBER");
             }
         }
-        List<ProductDto> products = productService.findByUserId(userId);
 
-        ProductDto requiredProduct = products.stream()
-                        .filter(p->p.id()!=null)
-                        .filter(p->p.id().toString().equals(request.productId()))
-                        .findFirst()
+        ProductDto requiredProduct = productService.findByUserIdAndProductId(userId,request.productId())
                         .orElseThrow(()->new BadRequestException("Product doesn't found with id = "+request.productId(),"PRODUCT_NOT_FOUND"));
 
-        if (requiredProduct.balance()<1)
-            throw new BadRequestException("Product balance with id = "+request.productId()+" is empty","BALANCE_EMPTY");
+        if (requiredProduct.balance()<request.summ())
+            throw new BadRequestException("Product balance with id = "+request.productId()+" is not enough","BALANCE_NOT_ENOUGH");
 
         return executorService.execute(request);
     }

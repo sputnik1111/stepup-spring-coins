@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
+import ru.stepup.spring.coins.core.dtos.PageDto;
 import ru.stepup.spring.coins.core.exceptions.BadRequestException;
 import ru.stepup.spring.coins.core.exceptions.IntegrationErrorDto;
 import ru.stepup.spring.coins.core.exceptions.IntegrationException;
@@ -34,8 +35,9 @@ public class ProductIntegrationRestClientImpl implements ProductIntegration {
             throw new BadRequestException("userId == null","USER_EMPTY");
 
         try{
-            return restClient.get()
-                    .uri(props.getClient().getUrl()+"?userId={userId}",userId)
+            PageDto<ProductDto> pageDto = restClient.get()
+                    .uri(props.getClient().getUrl())
+                    .header("USERID",userId.toString())
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                         throw new BadRequestException(response.getStatusText(),response.getStatusCode().toString());
@@ -44,6 +46,7 @@ public class ProductIntegrationRestClientImpl implements ProductIntegration {
                         throw new BadRequestException(response.getStatusText(),response.getStatusCode().toString());
                     })
                     .body(new ParameterizedTypeReference<>() {});
+            return pageDto.getContent();
         }catch (ResourceAccessException e){
             throw  new IntegrationException(
                     e.getMessage(),

@@ -108,10 +108,6 @@ public class UserService {
         return UserMapper.fromProductEntity(productDao.findByUserId(userId));
     }
 
-    public Optional<ProductEntity> findByProductId(Long productId) {
-        return productDao.findById(productId);
-    }
-
     public void clear() {
         userDao.clear();
     }

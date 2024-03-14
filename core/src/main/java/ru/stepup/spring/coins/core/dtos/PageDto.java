@@ -8,4 +8,8 @@ public class PageDto<T> {
     public PageDto(List<T> content) {
         this.content = content;
     }
+
+    public List<T> getContent() {
+        return content;
+    }
 }

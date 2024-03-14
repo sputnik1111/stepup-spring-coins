@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.stepup.spring.coins.core.dtos.PageDto;
 import ru.stepup.spring.coins.core.services.ProductService;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -20,7 +20,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductDto> create(@RequestParam Long userId) {
-        return productService.findByUserId(userId);
+    public PageDto<ProductDto> create(@RequestParam Long userId) {
+        return new PageDto<>(productService.findByUserId(userId));
     }
 }
