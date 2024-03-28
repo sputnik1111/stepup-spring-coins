@@ -1,6 +1,7 @@
 package com.github.sputnik1111.service.product.domain.user.rest;
 
-import com.github.sputnik1111.common.domain.page.Page;
+import com.github.sputnik1111.service.product.domain.product.CreateProductDto;
+import com.github.sputnik1111.service.product.domain.product.ProductView;
 import com.github.sputnik1111.service.product.domain.user.CreateUserDto;
 import com.github.sputnik1111.service.product.domain.user.UserService;
 import com.github.sputnik1111.service.product.domain.user.UserView;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -35,8 +38,8 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<UserView> findAll() {
-        return new Page<>(userService.findAll());
+    public List<UserView> findAll() {
+        return userService.findAll();
     }
 
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,10 +55,9 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{userId}")
-    public ResponseEntity<Void> delete(@PathVariable Long userId) {
-        return userService.delete(userId)
-                ? ResponseEntity.status(HttpStatus.OK).build()
-                : ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long userId) {
+        userService.delete(userId);
     }
 
     @DeleteMapping(value = "/all")
@@ -64,5 +66,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping(value = "/{userId}/products", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ProductView> create(@PathVariable Long userId, @RequestBody CreateProductDto request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.addProduct(userId, request));
+    }
 
+    @GetMapping(value = "/{userId}/products", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ProductView> findAllProductByUserId(@PathVariable Long userId) {
+        return userService.findByProductByUserId(userId);
+    }
+
+    @DeleteMapping(value = "/products/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable Long productId) {
+        userService.deleteProduct(productId);
+    }
 }
