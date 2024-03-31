@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: postgres
+    password: postgres
+  flyway:
+    enabled: true
+
+user-pay:
+  resetLimitCron:
+    cron: 0 0 0 * * *
